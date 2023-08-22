@@ -1,0 +1,4 @@
+.animate-fade-up {
+  transition: transform 250ms;
+  transform: translate(0, -10);
+}

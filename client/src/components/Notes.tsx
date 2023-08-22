@@ -33,6 +33,7 @@ const Notes = () => {
                   isActive={isActive}
                   setIsActive={setIsActive}
                   setEditNote={setEditNote}
+                  fetchNotes={fetchNotes}
                 />
               </div>
             );

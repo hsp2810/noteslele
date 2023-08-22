@@ -54,7 +54,7 @@ export const getAllNotes: RequestHandler<undefined, NotesResponse> = async (
   next
 ) => {
   try {
-    const notes = await NoteModal.find().exec();
+    const notes = await NoteModal.find({ isDone: false }).exec();
     res.status(200).json({
       message: "Fetched all the notes",
       notes,
@@ -121,6 +121,34 @@ export const updateNote: RequestHandler<
 
     res.status(200).json({
       message: "Note Updated",
+      note: note,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Update a note
+export const setCompleted: RequestHandler<
+  NoteRequest,
+  NoteResponse,
+  NoteBody
+> = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      throw createHttpError(400, "Invalid ID");
+    }
+
+    const note = await NoteModal.findByIdAndUpdate(id, {
+      isDone: true,
+    });
+    if (!note) {
+      throw createHttpError(400, "Note was found based on the ID");
+    }
+
+    res.status(200).json({
+      message: "Note was set to completed",
       note: note,
     });
   } catch (error) {

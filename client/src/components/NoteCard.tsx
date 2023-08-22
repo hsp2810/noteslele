@@ -1,7 +1,9 @@
 import DoneIcon from "@mui/icons-material/Done";
 import EditIcon from "@mui/icons-material/Edit";
 import { Note } from "../models/Note";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import axios from "axios";
+import "../styles/note.css";
 
 type SetActiveFunction = Dispatch<SetStateAction<boolean>>;
 type SetEditNoteFunction = Dispatch<SetStateAction<any>>;
@@ -11,15 +13,24 @@ interface ComponentProps {
   setIsActive: SetActiveFunction;
   isActive: boolean;
   setEditNote: SetEditNoteFunction;
+  fetchNotes: Function;
 }
 
 const NoteCard: React.FC<ComponentProps> = ({
   note,
   setIsActive,
-  isActive,
   setEditNote,
+  fetchNotes,
 }) => {
-  const handleCompleted = (): void => {};
+  const [noteIsCompleted, setNoteCompleted] = useState(false);
+  const handleCompleted = async () => {
+    const response = await axios.post(
+      `http://localhost:5000/notes/${note._id}`
+    );
+    if (response) {
+      setNoteCompleted(true);
+    }
+  };
 
   const handleEdit = (): void => {
     setIsActive((isActive) => !isActive);
@@ -27,8 +38,8 @@ const NoteCard: React.FC<ComponentProps> = ({
   };
 
   return (
-    <div className='p-4 md:w-[25rem] '>
-      <div className='flex rounded-lg h-full bg-slate-2 00 p-8 flex-col'>
+    <div className={`p-4 md:w-[25rem] ${noteIsCompleted ? "hidden" : ""}`}>
+      <div className='flex rounded-lg h-full bg-slate-200 p-8 flex-col transition-transform duration-500 ease-in-out'>
         <div className='flex items-center mb-3'>
           <h2 className='text-gray-900 title-font text-2xl font-medium uppercase'>
             {note.title}
